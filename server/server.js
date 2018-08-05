@@ -21,24 +21,23 @@ app.get("/todos", (req, res) => {       // LIST TODOS
     Todo.find().then((todos)=> { // find() success: send todos json
         res.send({todos}); 
     }, (e) => {                  // find() fail: err out
-        res.status(400).send(e);
+        res.status(400).send(`Err: ${e}`);
     });
 });
 
 app.get("/todos/:id", (req, res) => {   // SHOW TODO
 
-    if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Invalid to-do ID");   // check if ID was the right length/syntax
-    Todo.findById(req.params.id).then((todo)=> {                                // find() ran succesfully
-        if(!todo) res.status(404).send("ID not found.");                        // no data found
-        res.send({todo});                                                       // data found
-    }, (e) => {                                                                 // find() fail: err out
-        res.status(400).send(e);
+    if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Invalid to-do ID"); 
+    Todo.findById(req.params.id).then((todo)=> {                    
+        if(!todo) res.status(404).send("Err: ID not found.");      
+        res.send({todo});// returns doc that was found
+    }, (e) => {                                              
+        res.status(400).send(`Err: ${e}`);
     });
 });
 
 app.post("/todos", (req, res) => {      // NEW TODO
-    // display the object received
-    console.log(req.body);
+    if(req.body.text==null) return res.status(404).send("Err: No text set");
     
     // create the todo mongoose object
     var todo = new Todo({
@@ -51,6 +50,16 @@ app.post("/todos", (req, res) => {      // NEW TODO
     }, (e) => {
         res.status(400).send(e);   // save() fail: err out
       });
+});
+
+app.delete("/todos/:id", (req, res) => {  // DELETE TODO
+
+    if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Not valid ID");
+    Todo.findByIdAndRemove(req.params.id).then((doc) => {
+        if(!doc) res.status(404).send("Err: No to-do found");
+
+        res.status(200).send(`deleted: ${doc}`);// returns doc that was removed
+    }).catch((e)=> res.status(400).send("Err: "+e));
 });
 
 // start server
