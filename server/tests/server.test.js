@@ -1,3 +1,5 @@
+process.env.PORT=3001;
+
 const expect = require('expect');
 const request = require('supertest');
 
