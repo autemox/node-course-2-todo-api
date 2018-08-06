@@ -24,29 +24,35 @@ app.get("/", (req, res) => {            // SHOW HOME
     res.send("<a href=/todos>To-do list</a>");
 });
 
-app.get("/todos", (req, res) => {       // LIST TODOS
+app.get("/todos", authenticate, (req, res) => {       // LIST TODOS
 
-    Todo.find().then((todos)=> { // find() success: send todos json
+    Todo.find({
+        _creator: req.user._id
+    }).then((todos)=> { // find() success: send todos json
         res.send({todos}); 
     }, (e) => {                  // find() fail: err out
         res.status(400).send(`Err: ${e}`);
     });
 });
 
-app.get("/todos/:id", (req, res) => {   // SHOW TODO
+app.get("/todos/:id", authenticate, (req, res) => {   // SHOW TODO
 
     if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Invalid to-do ID"); 
-    Todo.findById(req.params.id).then((todo)=> {                    
+    Todo.findOne({
+        _creator: req.user._id,
+        _id: req.params.id
+    }).then((todo)=> {                    
         if(!todo) res.status(404).send("Err: ID not found.");      
         else res.send({todo});// returns doc that was found
     }).catch((e)=> res.status(400).send(`Err: ${e}`));
 });
 
-app.post("/todos", (req, res) => {      // NEW TODO
+app.post("/todos", authenticate, (req, res) => {      // NEW TODO
     
     // create the todo mongoose object
     var todo = new Todo({
-        text: req.body.text
+        text: req.body.text,
+        _creator: req.user._id
     });
 
     // save the todo mongoose object
@@ -55,18 +61,21 @@ app.post("/todos", (req, res) => {      // NEW TODO
     }).catch((e) => res.status(400).send(e));
 });
 
-app.delete("/todos/:id", (req, res) => {  // DELETE TODO
+app.delete("/todos/:id", authenticate, (req, res) => {  // DELETE TODO
 
     if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Not valid ID");
     
-    Todo.findByIdAndRemove(req.params.id).then((doc) => {
+    Todo.findOneAndRemove({
+            _id: req.params.id,
+            _creator: req.user._id
+        }).then((doc) => {
         if(!doc) return res.status(404).send("Err: No to-do found");
        
         res.status(200).send(doc);        // returns doc that was removed
     }).catch((e)=> res.status(400).send("Err: "+e));
 });
 
-app.patch("/todos/:id", (req, res) => {   // UPDATE TODO
+app.patch("/todos/:id", authenticate, (req, res) => {   // UPDATE TODO
 
     if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Not valid ID");
 
@@ -79,7 +88,10 @@ app.patch("/todos/:id", (req, res) => {   // UPDATE TODO
         body.completedAt = null;
     }
 
-    Todo.findByIdAndUpdate(req.params.id, {$set: body}, {new: true}).then((todo) => {  // perform the update
+    Todo.findOneAndUpdate({
+        _id: req.params.id,
+        _creator: req.user._id
+    }, {$set: body}, {new: true}).then((todo) => {  // perform the update
         if(!todo) return status(404).send();
 
         res.send({todo});                                                   // returns doc that was updated

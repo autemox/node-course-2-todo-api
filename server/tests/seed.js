@@ -19,7 +19,11 @@ const users = [
         _id: userTwoId, // without auth token
         name: 'colt',
         email: 'colt@gmail.com',
-        password: 'user2Pass'
+        password: 'user2Pass',
+        tokens: [{
+            access: 'auth',
+            token: jwt.sign({_id: userTwoId, access: 'auth'}, 'vadne123').toString()
+        }]
     }
 ];
 
@@ -27,13 +31,15 @@ var todos= [
     { 
         _id: new ObjectID(),
         text: 'Do the Dishes',
-        completed: false
+        completed: false,
+        _creator: userOneId
     }, 
     { 
         _id: new ObjectID(),
         text: 'Walk the Dog',
         completed: true, 
-        completedAt: 333
+        completedAt: 333, 
+        _creator: userOneId
     }
 ];
 

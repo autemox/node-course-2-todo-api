@@ -15,6 +15,10 @@ var todoSchema ={     // advanced schema
     completedAt: {
         type: Number,  // when the to-do was completed
         default: null
+    },
+    _creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
     }
 };
 var Todo = mongoose.model('Todo', todoSchema);  // our model
