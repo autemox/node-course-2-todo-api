@@ -49,8 +49,9 @@ userSchema.methods.toJSON = function () {
 };
 
 // custom method that generates auth token
-userSchema.methods.generateAuthToken = function () {
-    var user = this;
+userSchema.methods.generateAuthToken = function () {   
+    var user = this;        // this is the individual document (unlike userSchema.statics, would be model binding)
+
     var access = 'auth';
     var token = jwt.sign({ _id: user._id.toHexString(), access }, 'vadne123').toString();
 
@@ -58,6 +59,24 @@ userSchema.methods.generateAuthToken = function () {
     
     return user.save().then(()=> {
         return token;
+    });
+};
+
+// custom static method that returns promise, tries to find user by token
+userSchema.statics.findByToken = function(token) {   // .statics is an object like .methods but everything in it turns into a models method instead of a instances method
+    var User = this;  // this is bound to model not the invidual instance
+    
+    var decoded; // stores the decoded jwt values
+    try {
+        decoded = jwt.verify(token, 'vadne123'); // throws error if secret doesnt match or token value manipulated, which is why its in a try, catch
+    } catch(e) {// something failed
+        return Promise.reject('invalid token'); // return a rejected promise
+    }
+
+    return User.findOne({   // find associated user if any.  RETURNS A PROMISE
+        _id: decoded._id,
+        'tokens.token': token,    // always use '' around NESTED object properties (ie. when there are . symbols)
+        'tokens.access': 'auth'   // must match everything: the user, the token proving its them, and the level of authorization!
     });
 };
 

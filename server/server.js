@@ -9,6 +9,7 @@ var {mongoose} = require("./db/mongoose");  // connects to our mongoose database
 
 var {Todo} = require("./models/todo");      // schema and models for collections
 var {User} = require("./models/user");
+var {authenticate} = require('./middleware/authenticate');
 
 port=process.env.PORT;                      // initialize variables
 var app = express();
@@ -106,7 +107,10 @@ app.post("/users", (req, res) => {
     }).catch((e)=> res.status(400).send(e));
 });
 
+app.get('/users/me', authenticate, (req, res) => {
 
+    res.send(req.user);        
+});
 
 // start server
 app.listen(port, ()=> console.log(`Started server on port ${port}`));
