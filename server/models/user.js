@@ -64,7 +64,7 @@ userSchema.methods.generateAuthToken = function () {
     var user = this;        // this is the individual document (unlike userSchema.statics, would be model binding)
 
     var access = 'auth';
-    var token = jwt.sign({ _id: user._id.toHexString(), access }, 'vadne123').toString();
+    var token = jwt.sign({ _id: user._id.toHexString(), access }, process.env.JWT_SECRET).toString();
 
     user.tokens = user.tokens.concat({ access, token });
     
@@ -79,7 +79,7 @@ userSchema.statics.findByToken = function(token) {   // .statics is an object li
     
     var decoded; // stores the decoded jwt values
     try {
-        decoded = jwt.verify(token, 'vadne123'); // throws error if secret doesnt match or token value manipulated, which is why its in a try, catch
+        decoded = jwt.verify(token, process.env.JWT_SECRET); // throws error if secret doesnt match or token value manipulated, which is why its in a try, catch
     } catch(e) {// something failed
         return Promise.reject('invalid token'); // return a rejected promise
     }
