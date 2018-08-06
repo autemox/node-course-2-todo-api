@@ -49,6 +49,16 @@ userSchema.methods.toJSON = function () {
     return _.pick(userObject, ['_id', 'email']);    // pick off the variables that are not sensitive and are OK to send through JSON across the internet
 };
 
+userSchema.methods.removeToken= function(token) {
+    var user=this;
+
+    return user.update({
+        $pull: {    // takes specific things out of an array.  in this case, the token where token=token
+            tokens: {token}
+        }
+    });
+}
+
 // custom method that generates auth token
 userSchema.methods.generateAuthToken = function () {   
     var user = this;        // this is the individual document (unlike userSchema.statics, would be model binding)

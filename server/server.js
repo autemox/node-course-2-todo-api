@@ -125,9 +125,13 @@ app.post("/users/login", (req, res) => {
     }).catch((e)=> res.status(400).send());
 });
 
+app.get("/users/logout", authenticate, (req, res) => {
 
+    req.user.removeToken(req.token).then(()=> {       // note we got req.user and req.token from authenticate
 
-
+        res.status(200).send();
+    }).catch((e)=> res.status(400).send());
+});
 
 // start server
 app.listen(port, ()=> console.log(`Started server on port ${port}`));
