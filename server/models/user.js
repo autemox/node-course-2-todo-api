@@ -81,6 +81,27 @@ userSchema.statics.findByToken = function(token) {   // .statics is an object li
     });
 };
 
+// custom static method that returns a promise
+userSchema.statics.findByCredentials = function(email, password) {
+    var User = this;
+    
+    console.log("Find by: "+email);
+    return User.findOne( {email} ).then((user)=> {
+        if(!user) return Promise.reject();
+
+        return new Promise((resolve, reject) => {
+
+            bcrypt.compare(password, user.password, (err, res) => {
+                if(res) resolve(user);
+                else reject();
+           });
+        });
+    }).catch((e) => {
+        console.log("Reject");
+        return Promise.reject();
+    });
+};
+
 // this middleware runs before save()
 userSchema.pre('save', function(next) {
     var user=this;
