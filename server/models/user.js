@@ -2,6 +2,7 @@ var mongoose=require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt=require('bcryptjs');
 
 // CREATE MODEL
 var userSchema = new mongoose.Schema({     // advanced schema
@@ -79,6 +80,28 @@ userSchema.statics.findByToken = function(token) {   // .statics is an object li
         'tokens.access': 'auth'   // must match everything: the user, the token proving its them, and the level of authorization!
     });
 };
+
+// this middleware runs before save()
+userSchema.pre('save', function(next) {
+    var user=this;
+
+    console.log("test1");
+    if(user.isModified('password')) {  // checks to see if password is modified in this save()
+        // hash the password
+    console.log("test2");
+        bcrypt.genSalt(10, (err, salt) => {  // bigger number = takes longer on purpose to prevent brute force
+    
+            console.log("test3");
+            bcrypt.hash(user.password, salt, (err, hash) => {
+        
+    console.log("test4");
+                user.password=hash;  // store hash in your db instead of password.  has built in salt to prevent hash mining
+                next();
+            });
+        }); 
+    }
+    else next();
+});
 
 var User = mongoose.model('User', userSchema);  // our model
 
