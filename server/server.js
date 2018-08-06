@@ -38,7 +38,7 @@ app.get("/todos/:id", (req, res) => {   // SHOW TODO
     if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Invalid to-do ID"); 
     Todo.findById(req.params.id).then((todo)=> {                    
         if(!todo) res.status(404).send("Err: ID not found.");      
-        res.send({todo});// returns doc that was found
+        else res.send({todo});// returns doc that was found
     }).catch((e)=> res.status(400).send(`Err: ${e}`));
 });
 
@@ -52,17 +52,16 @@ app.post("/todos", (req, res) => {      // NEW TODO
     // save the todo mongoose object
     todo.save().then((doc) => {    // save() success: send todo json
         res.send(doc);
-    }, (e) => {
-        res.status(400).send(e);   // save() fail: err out
-      });
+    }).catch((e) => res.status(400).send(e));
 });
 
 app.delete("/todos/:id", (req, res) => {  // DELETE TODO
 
     if(!ObjectID.isValid(req.params.id)) return res.status(404).send("Err: Not valid ID");
+    
     Todo.findByIdAndRemove(req.params.id).then((doc) => {
-        if(!doc) res.status(404).send("Err: No to-do found");
-
+        if(!doc) return res.status(404).send("Err: No to-do found");
+       
         res.status(200).send(doc);        // returns doc that was removed
     }).catch((e)=> res.status(400).send("Err: "+e));
 });
@@ -122,7 +121,7 @@ app.post("/users/login", (req, res) => {
         return user.generateAuthToken().then((token) => {
 
             res.header('x-auth', token).status(200).send(user);  
-        });
+        }).catch((e)=> console.log(e));
     }).catch((e)=> res.status(400).send());
 });
 

@@ -256,4 +256,53 @@ describe('DELETE /todos/:id', () => {
             .end(done);
         });
     });
+
+    describe('POST /users/login (test login)', () => {
+
+        it('should login user: return 200 and token if successful login', (done) => {
+
+            var email=users[0].email;
+            var password=users[0].password;
+
+            request(app)
+            .post('/users/login')
+            .send({email, password})
+            .expect(200)
+            .expect((res) => {
+                expect(res.headers['x-auth']).toBeTruthy();
+            })
+            .end((err, res) => {
+                if(err) return done(err);
+
+                User.findById(users[0]._id).then((user)=> {
+
+                    expect(user.toObject().tokens[1]).toMatchObject({
+
+                        access: 'auth',
+                        token: res.headers['x-auth']
+                    });
+                    done();
+                }).catch((e)=> done(e));
+            });
+        });
+
+        it('should reject invalid login: return 400', (done) => {
+
+            request(app)
+            .post('/users/login')
+            .expect(400)
+            .expect((res) => {
+                expect(res.headers['x-auth']).toBeFalsy();
+            })
+            .end((err, res) => {
+                if(err) return done(err);
+
+                User.findById(users[0]._id).then((user)=> {
+
+                    expect(user.tokens.length).toBe(1);
+                    done();
+                }).catch((e)=> done(e));
+            });
+        });
+    });
 });

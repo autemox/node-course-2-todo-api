@@ -60,7 +60,7 @@ userSchema.methods.generateAuthToken = function () {
     
     return user.save().then(()=> {
         return token;
-    });
+    }).catch((e) => console.log("[user.js] generateAuthToken(): Unable to save token"));
 };
 
 // custom static method that returns promise, tries to find user by token
@@ -85,19 +85,19 @@ userSchema.statics.findByToken = function(token) {   // .statics is an object li
 userSchema.statics.findByCredentials = function(email, password) {
     var User = this;
     
-    console.log("Find by: "+email);
     return User.findOne( {email} ).then((user)=> {
         if(!user) return Promise.reject();
 
         return new Promise((resolve, reject) => {
 
             bcrypt.compare(password, user.password, (err, res) => {
-                if(res) resolve(user);
+                if(res) {
+                    resolve(user);
+                }
                 else reject();
            });
         });
     }).catch((e) => {
-        console.log("Reject");
         return Promise.reject();
     });
 };
