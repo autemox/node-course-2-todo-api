@@ -85,16 +85,12 @@ userSchema.statics.findByToken = function(token) {   // .statics is an object li
 userSchema.pre('save', function(next) {
     var user=this;
 
-    console.log("test1");
     if(user.isModified('password')) {  // checks to see if password is modified in this save()
         // hash the password
-    console.log("test2");
-        bcrypt.genSalt(10, (err, salt) => {  // bigger number = takes longer on purpose to prevent brute force
+        bcrypt.genSalt(5, (err, salt) => {  // bigger number = takes longer on purpose to prevent brute force
     
-            console.log("test3");
-            bcrypt.hash(user.password, salt, (err, hash) => {
+            bcrypt.hash(user.password, salt, (err, hash) => {    // combines password and salt to make a hash
         
-    console.log("test4");
                 user.password=hash;  // store hash in your db instead of password.  has built in salt to prevent hash mining
                 next();
             });

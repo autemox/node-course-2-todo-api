@@ -1,0 +1,59 @@
+[33mcommit 91b2757aee994f4a0085af8f4957bf82b9b994c3[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 22:58:50 2018 -0700
+
+    Hash user password before saving
+
+[33mcommit 5dcd6f8a8a066947321a3771926e3bd511293978[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 21:04:01 2018 -0700
+
+    Add GET /users/me and auth middleware
+
+[33mcommit f3ebc6a0c1ed742b7c881c4e15f0cffae894d498[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 17:52:56 2018 -0700
+
+    added post users route and token method
+
+[33mcommit 9831c27bf43bb2f699dbb1881da1cdf336442842[m[33m ([m[1;31mheroku/master[m[33m)[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 15:45:54 2018 -0700
+
+    added patching route
+
+[33mcommit 0a2adfe16ac0faa3256bb728f8a2069f15e2e060[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 14:42:26 2018 -0700
+
+    Add DELETE /todos/:id route
+
+[33mcommit 008b9fb20d387246597987ef953c33689ed10f57[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 14:12:26 2018 -0700
+
+    fixed package.json for heroku
+
+[33mcommit ce5ad59b9987deb89e453d2f6c353861296634ca[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 14:06:03 2018 -0700
+
+    Setup mongo for heroku
+
+[33mcommit e5dfbe779a4139622cad04ed00ef57c2d789db0b[m
+Author: Lss <autemox@gmail.com>
+Date:   Sun Aug 5 13:49:24 2018 -0700
+
+    add show individual todo and test cases
+
+[33mcommit 8ccfbd90baea3aa1fa74e37f098bb32ea51adc0c[m
+Author: Lss <autemox@gmail.com>
+Date:   Fri Aug 3 18:21:36 2018 -0700
+
+    added express
+
+[33mcommit 62220b838c31a87e569bacb3f1b0528113ed6eb0[m
+Author: Lss <autemox@gmail.com>
+Date:   Fri Aug 3 09:59:02 2018 -0700
+
+    Initial commit
